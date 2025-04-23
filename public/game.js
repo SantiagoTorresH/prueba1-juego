@@ -111,18 +111,44 @@ const maxJumpHeight = 3;
 
 // Variables para el movimiento de la cámara
 let cameraVerticalAngle = 0;
-const maxCameraAngle = Math.PI / 3; // 60 grados
-const minCameraAngle = -Math.PI / 3; // -60 grados
-const mouseSensitivity = 0.08; // Aumentar la sensibilidad
+const maxCameraAngle = Math.PI / 4; // 45 grados
+const minCameraAngle = -Math.PI / 4; // -45 grados
+const mouseSensitivity = 0.15;
+
+// Configuración de armas
+const weapons = {
+    pistol: {
+        damage: 10,
+        speed: 0.5,
+        color: 0x333333,
+        size: 0.3
+    },
+    shotgun: {
+        damage: 15,
+        speed: 0.3,
+        color: 0x666666,
+        size: 0.4
+    },
+    rifle: {
+        damage: 20,
+        speed: 0.7,
+        color: 0x444444,
+        size: 0.35
+    }
+};
+
+// Obtener el arma seleccionada
+const selectedWeapon = localStorage.getItem('selectedWeapon') || 'pistol';
+const weaponConfig = weapons[selectedWeapon];
 
 // Crear el arma
 const gunGroup = new THREE.Group();
 egg.add(gunGroup);
 
 // Cuerpo del arma (más grande y visible)
-const gunBodyGeometry = new THREE.BoxGeometry(0.3, 0.3, 1);
+const gunBodyGeometry = new THREE.BoxGeometry(weaponConfig.size, weaponConfig.size, 1);
 const gunBodyMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x333333,
+    color: weaponConfig.color,
     metalness: 0.8,
     roughness: 0.2
 });
@@ -130,9 +156,9 @@ const gunBody = new THREE.Mesh(gunBodyGeometry, gunBodyMaterial);
 gunGroup.add(gunBody);
 
 // Cañón del arma (más largo y visible)
-const gunBarrelGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 8);
+const gunBarrelGeometry = new THREE.CylinderGeometry(weaponConfig.size * 0.3, weaponConfig.size * 0.3, 1, 8);
 const gunBarrelMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x666666,
+    color: weaponConfig.color,
     metalness: 0.8,
     roughness: 0.2
 });
@@ -148,7 +174,7 @@ gunGroup.position.set(0.7, 0.4, 0.7);
 const eyesGroup = new THREE.Group();
 egg.add(eyesGroup);
 
-// Mover los ojos al grupo
+// Mover los ojos al grupo y ajustar su posición
 leftEye.position.set(-0.3, 0.3, 0.9);
 rightEye.position.set(0.3, 0.3, 0.9);
 eyesGroup.add(leftEye);
@@ -312,7 +338,7 @@ function handleJump() {
     }
 }
 
-// Modificar la función shoot para corregir la dirección del disparo
+// Modificar la función shoot para usar la configuración del arma
 function shoot() {
     const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
     
@@ -323,12 +349,12 @@ function shoot() {
     
     // Calcular dirección del disparo basado en la rotación del arma
     const direction = new THREE.Vector3(0, Math.sin(cameraVerticalAngle), -1);
-    direction.applyQuaternion(egg.quaternion); // Usar la rotación del huevo en lugar del arma
+    direction.applyQuaternion(egg.quaternion);
     
     bullet.userData = {
         direction: direction,
-        speed: 0.5,
-        damage: 10
+        speed: weaponConfig.speed,
+        damage: weaponConfig.damage
     };
     
     scene.add(bullet);
@@ -337,7 +363,8 @@ function shoot() {
     // Enviar información del disparo al servidor
     socket.emit('playerShoot', {
         position: bullet.position,
-        direction: direction
+        direction: direction,
+        weaponType: selectedWeapon
     });
 }
 

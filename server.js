@@ -13,6 +13,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Almacenar información de los jugadores
 const players = new Map();
 
+// Configuración de armas
+const weapons = {
+    pistol: {
+        damage: 10,
+        speed: 0.5
+    },
+    shotgun: {
+        damage: 15,
+        speed: 0.3
+    },
+    rifle: {
+        damage: 20,
+        speed: 0.7
+    }
+};
+
 io.on('connection', (socket) => {
     console.log('Un jugador se ha conectado:', socket.id);
     
@@ -20,7 +36,8 @@ io.on('connection', (socket) => {
     players.set(socket.id, {
         position: { x: 0, y: 0, z: 0 },
         rotation: { y: 0 },
-        health: 100
+        health: 100,
+        weapon: 'pistol' // Arma por defecto
     });
     
     // Enviar información de todos los jugadores al nuevo jugador
@@ -31,7 +48,8 @@ io.on('connection', (socket) => {
         id: socket.id,
         position: { x: 0, y: 0, z: 0 },
         rotation: { y: 0 },
-        health: 100
+        health: 100,
+        weapon: 'pistol'
     });
 
     socket.on('disconnect', () => {
@@ -58,14 +76,16 @@ io.on('connection', (socket) => {
         io.emit('bulletFired', {
             playerId: socket.id,
             position: data.position,
-            direction: data.direction
+            direction: data.direction,
+            weaponType: data.weaponType
         });
     });
     
     socket.on('playerHit', (data) => {
         const targetPlayer = players.get(data.targetId);
         if (targetPlayer) {
-            targetPlayer.health -= data.damage;
+            const weaponConfig = weapons[data.weaponType] || weapons.pistol;
+            targetPlayer.health -= weaponConfig.damage;
             if (targetPlayer.health <= 0) {
                 // Respawn del jugador
                 targetPlayer.health = 100;
