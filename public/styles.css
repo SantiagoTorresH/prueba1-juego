@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #035475; /* Azul cielo */
+}
+
+canvas {
+    display: block;
+    width: 80vw;
+    height: 70vh;
+}
+
+h1 {
+    margin: 10px 0;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 90vh;
+}
