@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autenticación - Alien Shockers</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <h1 id="title">Registro</h1>
+    <form id="authForm" class="auth-form">
+      <input id="username" class="auth-input" placeholder="Usuario o correo" required />
+      <input id="email" type="email" class="auth-input hidden" placeholder="Correo" />
+      <input id="password" type="password" class="auth-input" placeholder="Contraseña" required />
+      <label class="auth-remember">
+        <input id="rememberMe" type="checkbox" />
+        <span>Recordarme</span>
+      </label>
+      <button type="submit" class="auth-button">Crear cuenta</button>
+    </form>
+    <div class="auth-toggle" id="toggleMode">Ya tengo cuenta</div>
+    <div class="auth-message" id="message"></div>
+  </div>
+
+  <script src="/session.js"></script>
+  <script>
+    const form = document.getElementById('authForm');
+    const title = document.getElementById('title');
+    const toggle = document.getElementById('toggleMode');
+    const message = document.getElementById('message');
+    const emailInput = document.getElementById('email');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const rememberMeInput = document.getElementById('rememberMe');
+
+    let isLogin = false;
+
+    function setMode(login) {
+      isLogin = login;
+      title.textContent = login ? 'Iniciar sesión' : 'Registro';
+      toggle.textContent = login ? 'Crear una cuenta' : 'Ya tengo cuenta';
+      emailInput.classList.toggle('hidden', login);
+      emailInput.required = !login;
+      form.querySelector('button').textContent = login ? 'Entrar' : 'Crear cuenta';
+      message.textContent = '';
+    }
+
+    toggle.addEventListener('click', () => setMode(!isLogin));
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      message.textContent = 'Procesando...';
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        message.textContent = 'Usuario y contraseña son obligatorios';
+        return;
+      }
+
+      const body = {
+        username,
+        password
+      };
+
+      if (!isLogin) {
+        const email = emailInput.value.trim();
+        if (!email) {
+          message.textContent = 'El correo es obligatorio para registrarte';
+          return;
+        }
+        body.email = email;
+      }
+
+      try {
+        const response = await fetch(`/api/${isLogin ? 'login' : 'register'}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Error al autenticar');
+        }
+
+        const rememberMe = rememberMeInput.checked;
+        window.authSession.storeToken(data.token, rememberMe);
+        window.authSession.storeUser(data.user, rememberMe);
+        message.textContent = '¡Listo! Redirigiendo...';
+        window.location.replace('/menu.html');
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    });
+
+    setMode(false);
+  </script>
+</body>
+</html>

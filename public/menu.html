@@ -3,131 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shell Shockers Clone - Menú Principal</title>
-    <style>
-        body {
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
-            font-family: Arial, sans-serif;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            text-align: center;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-            color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .preview-section {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        #preview-container {
-            width: 200px;
-            height: 200px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .weapons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .weapon {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            min-width: 200px;
-        }
-
-        .weapon:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        .weapon.selected {
-            background: rgba(255, 215, 0, 0.3);
-            border: 2px solid #ffd700;
-        }
-
-        .weapon img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .weapon-info {
-            text-align: left;
-        }
-
-        .weapon h3 {
-            margin: 0;
-            color: #ffd700;
-        }
-
-        .weapon-stats {
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-
-        .play-button {
-            background: #ffd700;
-            color: #000;
-            border: none;
-            padding: 1rem 3rem;
-            font-size: 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .play-button:hover {
-            background: #ffed4a;
-            transform: scale(1.05);
-        }
-    </style>
+    <title>Alien Shockers  - Menú Principal</title>
+    <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
+<body class="menu-page">
     <div class="container">
-        <h1>Shell Shockers Clone</h1>
+        <div class="user-bar">
+            <div class="user-info">
+                <span id="userLabel">Cargando usuario...</span>
+                <span id="sessionStatus" class="status-chip">Conectado</span>
+            </div>
+            <button class="logout-button" onclick="logout()">Cerrar sesión</button>
+        </div>
+        <h1>Alien Shockers </h1>
         
+        <div class="room-selector">
+            <label for="roomIdInput">Sala:</label>
+            <input id="roomIdInput" class="room-input" placeholder="default-room" value="default-room" />
+            <button class="room-button" onclick="startGame()">Entrar a sala</button>
+        </div>
+        <div id="roomHint" class="room-hint">Puedes usar cualquier nombre para crear o unirte a una sala.</div>
+
         <div class="preview-section">
             <div id="preview-container"></div>
             
             <div class="weapons">
                 <div class="weapon selected" data-weapon="pistol" onclick="selectWeapon('pistol')">
-                    <img src="weapons/pistol.png" alt="Pistola">
+                    <div class="weapon-icon weapon-icon-pistol" aria-hidden="true"></div>
                     <div class="weapon-info">
                         <h3>Pistola</h3>
                         <div class="weapon-stats">
@@ -138,7 +40,7 @@
                 </div>
                 
                 <div class="weapon" data-weapon="shotgun" onclick="selectWeapon('shotgun')">
-                    <img src="weapons/shotgun.png" alt="Escopeta">
+                    <div class="weapon-icon weapon-icon-shotgun" aria-hidden="true"></div>
                     <div class="weapon-info">
                         <h3>Escopeta</h3>
                         <div class="weapon-stats">
@@ -149,7 +51,7 @@
                 </div>
                 
                 <div class="weapon" data-weapon="rifle" onclick="selectWeapon('rifle')">
-                    <img src="weapons/rifle.png" alt="Rifle">
+                    <div class="weapon-icon weapon-icon-rifle" aria-hidden="true"></div>
                     <div class="weapon-info">
                         <h3>Rifle</h3>
                         <div class="weapon-stats">
@@ -165,6 +67,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/session.js"></script>
     <script src="menu-preview.js"></script>
     <script>
         let selectedWeapon = 'pistol';
@@ -180,13 +83,56 @@
             updateWeapon(weaponType);
         }
 
-        function startGame() {
-            // Guardar la selección del arma en localStorage
+        async function startGame() {
+            const roomId = document.getElementById('roomIdInput').value.trim() || 'default-room';
+            const user = window.authSession.getStoredUser();
+
+            if (!user) {
+                logout();
+                return;
+            }
+
             localStorage.setItem('selectedWeapon', selectedWeapon);
-            
-            // Redirigir al juego usando el puerto correcto
-            window.location.href = 'http://localhost:3000/game.html';
+            localStorage.setItem('roomId', roomId);
+
+            try {
+                    const response = await fetch('/api/rooms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roomId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error creando o entrando a la sala');
+                }
+
+                window.location.replace('/game.html');
+            } catch (error) {
+                document.getElementById('roomHint').textContent = error.message;
+            }
         }
+
+        function logout() {
+            window.authSession.clearAuthState();
+            localStorage.removeItem('roomId');
+            localStorage.removeItem('selectedWeapon');
+            window.authSession.updateSessionStatus(document.getElementById('sessionStatus'));
+            window.location.replace('/auth.html');
+        }
+
+        async function loadUser() {
+            const user = await window.authSession.validateStoredSession({ redirectTo: '/auth.html' });
+            if (!user) {
+                return;
+            }
+
+            document.getElementById('userLabel').textContent = `Usuario: ${user.username}`;
+            window.authSession.updateSessionStatus(document.getElementById('sessionStatus'));
+        }
+
+        window.addEventListener('online', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
+        window.addEventListener('offline', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
+        loadUser();
     </script>
 </body>
 </html> 

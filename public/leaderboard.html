@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ranking - Alien Shockers </title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="menu-page">
+  <div class="leaderboard-container">
+    <h1>Ranking</h1>
+    <button class="play-button" onclick="window.location.href='/menu.html'">Volver al menú</button>
+    <div id="leaderboardList" class="leaderboard-list"></div>
+  </div>
+
+  <script>
+    async function loadLeaderboard() {
+      const response = await fetch('/api/leaderboard');
+      const data = await response.json();
+      const list = document.getElementById('leaderboardList');
+
+      if (!response.ok) {
+        list.innerHTML = '<p>Error cargando el ranking</p>';
+        return;
+      }
+
+      if (!data.users.length) {
+        list.innerHTML = '<p>Aún no hay partidas registradas</p>';
+        return;
+      }
+
+      list.innerHTML = data.users.map((user, index) => `
+        <div class="leaderboard-item">
+          <div>
+            <strong>#${index + 1} ${user.username}</strong>
+            <div class="leaderboard-meta">${user.stats.wins} victorias · ${user.stats.kills} kills</div>
+          </div>
+          <div class="leaderboard-stats">
+            <span>Wins: ${user.stats.wins}</span>
+            <span>Losses: ${user.stats.losses}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    loadLeaderboard();
+  </script>
+</body>
+</html>

@@ -3,13 +3,230 @@ body {
     overflow: hidden;
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #035475; /* Azul cielo */
+    background-color: #035475;
+}
+
+body.auth-page {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #111, #333);
+    color: white;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    overflow: auto;
+}
+
+.auth-card {
+    width: min(90vw, 420px);
+    background: rgba(0, 0, 0, 0.75);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.auth-card h1 {
+    margin-top: 0;
+    text-align: center;
+    color: #ffd700;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-input,
+.auth-button {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.auth-button {
+    background: #ffd700;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.auth-toggle {
+    text-align: center;
+    margin-top: 12px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.auth-message {
+    margin-top: 12px;
+    min-height: 20px;
+    color: #ffd700;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.auth-remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ddd;
+    font-size: 0.95rem;
+}
+
+.auth-remember input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    color: #ffd700;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.status-chip::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2ecc71;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.status-chip.status-sin-conexion {
+    color: #f1c40f;
+    border-color: rgba(241, 196, 15, 0.35);
+    background: rgba(241, 196, 15, 0.15);
+}
+
+.status-chip.status-sin-conexion::before {
+    background: #f1c40f;
+    box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.2);
+}
+
+.status-chip.status-sin-sesion {
+    color: #e74c3c;
+    border-color: rgba(231, 76, 60, 0.35);
+    background: rgba(231, 76, 60, 0.15);
+}
+
+.status-chip.status-sin-sesion::before {
+    background: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.logout-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #ffd700;
+    color: #111;
+    font-weight: 600;
+}
+
+.game-page {
+    margin: 0;
+    background: #000;
+    overflow: hidden;
+}
+
+.game-shell {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.game-topbar {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.game-topbar > * {
+    pointer-events: auto;
+}
+
+.game-shell button {
+    background: rgba(255, 215, 0, 0.8);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.game-shell button:hover {
+    background: rgba(255, 215, 0, 1);
+    transform: scale(1.05);
+}
+
+.hidden {
+    display: none !important;
 }
 
 canvas {
     display: block;
-    width: 80vw;
-    height: 70vh;
+    width: 100vw;
+    height: 100vh;
+}
+
+.weapon-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.12);
+}
+
+.weapon-icon::before {
+    content: '';
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    display: block;
+}
+
+.weapon-icon-pistol::before {
+    background: linear-gradient(135deg, #ffd700 0%, #f39c12 100%);
+}
+
+.weapon-icon-shotgun::before {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.weapon-icon-rifle::before {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
 }
 
 h1 {
@@ -22,4 +239,219 @@ h1 {
     position: relative;
     width: 100vw;
     height: 90vh;
+}
+
+/* Estilos del menú */
+body.menu-page {
+    margin: 0;
+    background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.user-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #ddd;
+    font-size: 1rem;
+}
+
+.preview-section {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+#preview-container {
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.weapons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.weapon {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.weapon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.weapon.selected {
+    background: rgba(255, 215, 0, 0.3);
+    border: 2px solid #ffd700;
+}
+
+.weapon-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.12);
+}
+
+.weapon-icon::before {
+    content: '';
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    display: block;
+}
+
+.weapon-icon-pistol::before {
+    background: linear-gradient(135deg, #ffd700 0%, #f39c12 100%);
+}
+
+.weapon-icon-shotgun::before {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.weapon-icon-rifle::before {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.weapon-info {
+    text-align: left;
+}
+
+.weapon h3 {
+    margin: 0;
+    color: #ffd700;
+}
+
+.weapon-stats {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.play-button {
+    background: #ffd700;
+    color: #000;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.play-button:hover {
+    background: #ffed4a;
+    transform: scale(1.05);
+}
+
+.room-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.room-input {
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    border: none;
+    min-width: 220px;
+    font-size: 1rem;
+}
+
+.room-button {
+    background: #ffd700;
+    border: none;
+    padding: 0.9rem 1.4rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.room-button:hover {
+    transform: scale(1.05);
+}
+
+.room-hint {
+    color: #ccc;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.leaderboard-container {
+    background: rgba(0, 0, 0, 0.75);
+    padding: 2rem;
+    border-radius: 12px;
+    min-width: min(90vw, 500px);
+    color: white;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+}
+
+.leaderboard-meta {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.leaderboard-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: #ffd700;
+    font-size: 0.9rem;
+    gap: 0.2rem;
 }

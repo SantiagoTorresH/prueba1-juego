@@ -3,49 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shell Shockers Clone - Juego</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-        
-        #menuButton {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 215, 0, 0.8);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            z-index: 1000;
-        }
-        
-        #menuButton:hover {
-            background: rgba(255, 215, 0, 1);
-            transform: scale(1.05);
-        }
-    </style>
+    <title>Alien Shockers  - Juego</title>
+    <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
-    <button id="menuButton" onclick="returnToMenu()">Volver al Menú</button>
-    
-    <!-- Cargar scripts en el orden correcto -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="game.js"></script>
-    
-    <script>
-        function returnToMenu() {
-            // Limpiar localStorage si es necesario
-            // localStorage.removeItem('selectedWeapon');
-            
-            // Redirigir al menú principal
-            window.location.href = 'http://localhost:3000/menu.html';
-        }
-    </script>
+<body class="game-page">
+    <div class="game-shell">
+        <div class="game-topbar">
+            <div>
+                <span id="roomLabel" class="status-chip">Sala: default-room</span>
+                <span id="sessionStatus" class="status-chip">Conectado</span>
+            </div>
+            <button id="menuButton" onclick="returnToMenu()">Volver al Menú</button>
+        </div>
+
+        <!-- Cargar scripts en el orden correcto -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/session.js"></script>
+        <script src="game.js"></script>
+
+        <script>
+            function returnToMenu() {
+                window.location.replace('/menu.html');
+            }
+
+            window.addEventListener('load', async () => {
+                window.authSession.updateSessionStatus(document.getElementById('sessionStatus'));
+                const roomId = localStorage.getItem('roomId') || 'default-room';
+                const user = window.authSession.getStoredUser();
+
+                const validatedUser = await window.authSession.validateStoredSession({ redirectTo: '/auth.html' });
+                if (!validatedUser) {
+                    return;
+                }
+
+                document.getElementById('roomLabel').textContent = `Sala: ${roomId}`;
+                socket.emit('joinRoom', {
+                    roomId,
+                    playerData: {
+                        id: validatedUser.id,
+                        username: validatedUser.username
+                    }
+                });
+            });
+
+            window.addEventListener('online', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
+            window.addEventListener('offline', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
+        </script>
+    </div>
 </body>
 </html> 
