@@ -118,6 +118,14 @@ scene.add(previewAlien);
 const gunGroup = new THREE.Group();
 previewAlien.add(gunGroup);
 
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener('pointermove', (event) => {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+});
+
 function updateWeapon(weaponType) {
     while (gunGroup.children.length > 0) {
         gunGroup.remove(gunGroup.children[0]);
@@ -154,7 +162,10 @@ camera.lookAt(0, 0.8, 0);
 
 function animate() {
     requestAnimationFrame(animate);
-    previewAlien.rotation.y += 0.008;
+    previewAlien.rotation.y = mouseX * 1.5;
+    previewAlien.rotation.x = mouseY * 0.7;
+    gunGroup.rotation.x = mouseY * 0.8;
+    gunGroup.rotation.y = mouseX * 0.6;
     renderer.render(scene, camera);
 }
 

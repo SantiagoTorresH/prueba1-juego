@@ -13,12 +13,17 @@
   function getStoredTokenInfo() {
     const localStorageRef = getStorage(false);
     const sessionStorageRef = getStorage(true);
+    const sessionToken = readToken(sessionStorageRef);
+    if (sessionToken) {
+      return { token: sessionToken, type: 'session', storage: sessionStorageRef };
+    }
+
     const localToken = readToken(localStorageRef);
     if (localToken) {
       return { token: localToken, type: 'local', storage: localStorageRef };
     }
 
-    return { token: readToken(sessionStorageRef), type: 'session', storage: sessionStorageRef };
+    return { token: null, type: 'none', storage: sessionStorageRef };
   }
 
   function getStoredToken() {
@@ -53,11 +58,11 @@
   function getStoredUser() {
     const localStorageRef = getStorage(false);
     const sessionStorageRef = getStorage(true);
-    const localUser = readUser(localStorageRef);
-    if (localUser) {
-      return localUser;
+    const sessionUser = readUser(sessionStorageRef);
+    if (sessionUser) {
+      return sessionUser;
     }
-    return readUser(sessionStorageRef);
+    return readUser(localStorageRef);
   }
 
   function readUser(storage) {

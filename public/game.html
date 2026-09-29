@@ -3,53 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alien Shockers  - Juego</title>
+    <title>Meteor Yard | Alien Arena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css" />
+    <style>
+        #gamePreviewContainer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 100;
+            display: none;
+        }
+
+        #gameContainer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+    </style>
 </head>
 <body class="game-page">
-    <div class="game-shell">
-        <div class="game-topbar">
-            <div>
-                <span id="roomLabel" class="status-chip">Sala: default-room</span>
-                <span id="sessionStatus" class="status-chip">Conectado</span>
+    <!-- Contenedor del preview -->
+    <div id="gamePreviewContainer"></div>
+
+    <!-- Contenedor del juego -->
+    <div id="gameContainer">
+        <div class="game-shell">
+            <div class="game-topbar">
+                <div>
+                    <span id="roomLabel" class="status-chip">Sala: default-room</span>
+                    <span id="sessionStatus" class="status-chip">Conectado</span>
+                </div>
+                <button id="menuButton" onclick="returnToMenu()">Volver al Menú</button>
             </div>
-            <button id="menuButton" onclick="returnToMenu()">Volver al Menú</button>
-        </div>
 
-        <!-- Cargar scripts en el orden correcto -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="/session.js"></script>
-        <script src="game.js"></script>
+            <!-- Cargar scripts en el orden correcto -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="/session.js"></script>
+            <script src="/arena-config.js"></script>
+            <script src="/arena-physics.js"></script>
+            <script src="/arena-visuals.js"></script>
+            <script src="game-preview.js"></script>
+            <script src="game.js"></script>
 
-        <script>
-            function returnToMenu() {
-                window.location.replace('/menu.html');
-            }
-
-            window.addEventListener('load', async () => {
-                window.authSession.updateSessionStatus(document.getElementById('sessionStatus'));
-                const roomId = localStorage.getItem('roomId') || 'default-room';
-                const user = window.authSession.getStoredUser();
-
-                const validatedUser = await window.authSession.validateStoredSession({ redirectTo: '/auth.html' });
-                if (!validatedUser) {
-                    return;
+            <script>
+                function returnToMenu() {
+                    window.location.replace('/menu.html');
                 }
 
-                document.getElementById('roomLabel').textContent = `Sala: ${roomId}`;
-                socket.emit('joinRoom', {
-                    roomId,
-                    playerData: {
-                        id: validatedUser.id,
-                        username: validatedUser.username
-                    }
-                });
-            });
+                window.addEventListener('load', async () => {
+                    window.authSession.updateSessionStatus(document.getElementById('sessionStatus'));
+                    const roomId = localStorage.getItem('roomId') || 'default-room';
+                    const storedUser = window.authSession.getStoredUser();
 
-            window.addEventListener('online', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
-            window.addEventListener('offline', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
-        </script>
+                    const validatedUser = await window.authSession.validateStoredSession({ redirectTo: '/auth.html' });
+                    if (!validatedUser) {
+                        return;
+                    }
+
+                    const alias = localStorage.getItem('playerAlias') || storedUser?.username || validatedUser.username || 'Jugador';
+                    const finalUser = { ...validatedUser, username: alias };
+                    window.authSession.storeUser(finalUser, true);
+                    window.authSession.storeUser(finalUser, false);
+
+                    document.getElementById('roomLabel').textContent = `Sala: ${roomId}`;
+
+                    window.gamePreview.show();
+                    window.gamePreview.setupListeners();
+
+                    socket.emit('joinRoom', {
+                        roomId,
+                        playerData: {
+                            id: finalUser.id,
+                            username: finalUser.username,
+                            weapon: localStorage.getItem('selectedWeapon') || 'pistol'
+                        }
+                    });
+                });
+
+                window.addEventListener('online', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
+                window.addEventListener('offline', () => window.authSession.updateSessionStatus(document.getElementById('sessionStatus')));
+
+                // Función global para iniciar el juego (llamada desde el preview)
+                function startGame() {
+                    if (window.gamePreview && typeof window.gamePreview.hide === 'function') {
+                        window.gamePreview.hide();
+                    }
+                    window.gameInitialized = true;
+                    if (typeof window.initializeGameRenderer === 'function') {
+                        window.initializeGameRenderer();
+                    }
+                    const hud = document.getElementById('gameHUD');
+                    if (hud) {
+                        hud.style.display = 'block';
+                    }
+                }
+            </script>
+        </div>
     </div>
 </body>
-</html> 
+</html>

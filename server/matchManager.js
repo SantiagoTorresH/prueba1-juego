@@ -7,14 +7,21 @@ class MatchManager {
     this.activeMatches = new Map();
   }
 
+  assignTeam(existingPlayers = []) {
+    const redCount = existingPlayers.filter((p) => p.team === 'red').length;
+    const blueCount = existingPlayers.filter((p) => p.team === 'blue').length;
+    return redCount <= blueCount ? 'red' : 'blue';
+  }
+
   createMatch(roomId, players = []) {
     const match = {
       roomId,
       status: 'active',
       startedAt: new Date(),
-      players: players.map((player) => ({
+      players: players.map((player, index) => ({
         id: player.id,
         username: player.username || player.name || 'Jugador',
+        team: player.team || (index % 2 === 0 ? 'red' : 'blue'),
         kills: 0,
         deaths: 0,
         alive: true,
@@ -40,9 +47,11 @@ class MatchManager {
         return existingMatch;
       }
 
+      const assignedTeam = this.assignTeam(existingMatch.players);
       existingMatch.players.push({
         id: player.id,
         username: player.username || player.name || 'Jugador',
+        team: player.team || assignedTeam,
         kills: 0,
         deaths: 0,
         alive: true,
@@ -80,13 +89,23 @@ class MatchManager {
   }
 
   reconnectPlayer(roomId, playerId, playerData = {}) {
-    const player = this.getPlayer(roomId, playerId);
+    let player = this.getPlayer(roomId, playerId);
+
+    if (!player) {
+      const match = this.ensureMatch(roomId, {
+        id: playerId,
+        username: playerData.username || playerData.name || 'Jugador'
+      });
+      player = match.players.find((entry) => entry.id === playerId) || null;
+    }
+
     if (!player) {
       return null;
     }
 
     player.connected = true;
     player.lastSeenAt = new Date();
+    player.alive = typeof player.alive === 'boolean' ? player.alive : true;
     if (playerData.username) {
       player.username = playerData.username;
     }

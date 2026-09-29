@@ -3,100 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alien Shockers  - Menú Principal</title>
+    <title>Alien Shockers - Menú Principal</title>
     <link rel="stylesheet" href="/styles.css" />
 </head>
 <body class="menu-page">
-    <div class="container">
-        <div class="user-bar">
-            <div class="user-info">
-                <span id="userLabel">Cargando usuario...</span>
-                <span id="sessionStatus" class="status-chip">Conectado</span>
+    <div class="menu-shell">
+        <header class="topbar">
+            <div class="brand-block">
+                <div class="brand-logo">ALIEN</div>
+                <div class="brand-logo brand-logo-alt">SHOCKERS</div>
             </div>
-            <button class="logout-button" onclick="logout()">Cerrar sesión</button>
+
+            <div class="topbar-actions">
+                <div class="meteor-badge" aria-label="Meteoritos acumulados">
+                    <span class="meteor-dot"></span>
+                    <span>Meteoritos</span>
+                    <strong id="meteorCount">84</strong>
+                </div>
+                <div class="username-badge">
+                    <label for="playerNameInput" class="username-label">Alias</label>
+                    <input id="playerNameInput" class="player-name-input" maxlength="16" value="" placeholder="Tu apodo" />
+                </div>
+                <button class="settings-button" aria-label="Ajustes">⚙</button>
+            </div>
+        </header>
+
+        <div class="menu-layout">
+            <aside class="side-nav">
+                <div class="nav-user" id="userLabel">Cargando usuario...</div>
+                <button class="nav-button active">🏠 HOME</button>
+                <button class="nav-button">👤 PROFILE</button>
+                <button class="nav-button">🎒 INVENTORY</button>
+                <button class="nav-button">🛒 SHOP</button>
+            </aside>
+
+            <main class="main-panel">
+                <div class="main-card">
+                    <div class="battle-header">
+                        <span class="battle-label">CRACKSHOT</span>
+                        <span class="weapon-selection-label">ELIGE TU ARMA</span>
+                    </div>
+
+                    <div class="preview-section">
+                        <div id="preview-container"></div>
+                    </div>
+
+                    <div class="play-row">
+                        <button class="play-button play-primary" onclick="startGame()">PLAY</button>
+                        <button class="play-button play-secondary" onclick="startGame()">PLAY WITH FRIENDS</button>
+                    </div>
+
+                    <div class="mode-row">
+                        <button class="mode-button selected">TEAM</button>
+                        <button class="mode-button">FFA</button>
+                        <button class="mode-button">BRAWL</button>
+                    </div>
+                </div>
+            </main>
         </div>
-        <h1>Alien Shockers </h1>
-        
-        <div class="room-selector">
-            <label for="roomIdInput">Sala:</label>
+
+        <div class="room-bar">
+            <label for="roomIdInput">Sala</label>
             <input id="roomIdInput" class="room-input" placeholder="default-room" value="default-room" />
-            <button class="room-button" onclick="startGame()">Entrar a sala</button>
+            <button class="room-button" onclick="startGame()">Entrar</button>
         </div>
+
         <div id="roomHint" class="room-hint">Puedes usar cualquier nombre para crear o unirte a una sala.</div>
 
-        <div class="preview-section">
-            <div id="preview-container"></div>
-            
-            <div class="weapons">
-                <div class="weapon selected" data-weapon="pistol" onclick="selectWeapon('pistol')">
-                    <div class="weapon-icon weapon-icon-pistol" aria-hidden="true"></div>
-                    <div class="weapon-info">
-                        <h3>Pistola</h3>
-                        <div class="weapon-stats">
-                            <p>Daño: 10</p>
-                            <p>Velocidad: 0.5</p>
-                        </div>
+        <div class="weapon-stage">
+            <div class="weapon selected" data-weapon="pistol" onclick="selectWeapon('pistol')">
+                <div class="weapon-icon weapon-icon-pistol" aria-hidden="true"></div>
+                <div class="weapon-info">
+                    <h3>Pistola</h3>
+                    <div class="weapon-stats">
+                        <p>Daño: 10</p>
+                        <p>Velocidad: 0.5</p>
                     </div>
                 </div>
-                
-                <div class="weapon" data-weapon="shotgun" onclick="selectWeapon('shotgun')">
-                    <div class="weapon-icon weapon-icon-shotgun" aria-hidden="true"></div>
-                    <div class="weapon-info">
-                        <h3>Escopeta</h3>
-                        <div class="weapon-stats">
-                            <p>Daño: 15</p>
-                            <p>Velocidad: 0.3</p>
-                        </div>
+            </div>
+
+            <div class="weapon" data-weapon="shotgun" onclick="selectWeapon('shotgun')">
+                <div class="weapon-icon weapon-icon-shotgun" aria-hidden="true"></div>
+                <div class="weapon-info">
+                    <h3>Escopeta</h3>
+                    <div class="weapon-stats">
+                        <p>Daño: 15</p>
+                        <p>Velocidad: 0.3</p>
                     </div>
                 </div>
-                
-                <div class="weapon" data-weapon="rifle" onclick="selectWeapon('rifle')">
-                    <div class="weapon-icon weapon-icon-rifle" aria-hidden="true"></div>
-                    <div class="weapon-info">
-                        <h3>Rifle</h3>
-                        <div class="weapon-stats">
-                            <p>Daño: 20</p>
-                            <p>Velocidad: 0.7</p>
-                        </div>
+            </div>
+
+            <div class="weapon" data-weapon="rifle" onclick="selectWeapon('rifle')">
+                <div class="weapon-icon weapon-icon-rifle" aria-hidden="true"></div>
+                <div class="weapon-info">
+                    <h3>Rifle</h3>
+                    <div class="weapon-stats">
+                        <p>Daño: 20</p>
+                        <p>Velocidad: 0.7</p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <button class="play-button" onclick="startGame()">¡Jugar!</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="/session.js"></script>
     <script src="menu-preview.js"></script>
     <script>
-        let selectedWeapon = 'pistol';
+        let selectedWeapon = localStorage.getItem('selectedWeapon') || 'pistol';
+
+        function syncMeteorCounter(value) {
+            const meteorCounter = document.getElementById('meteorCount');
+            if (!meteorCounter) return;
+
+            const parsed = Number(value) || 0;
+            meteorCounter.textContent = String(parsed);
+            localStorage.setItem('meteorCount', String(parsed));
+        }
+
+        function updateAliasPreview() {
+            const input = document.getElementById('playerNameInput');
+            const display = document.getElementById('userLabel');
+            if (!input || !display) return;
+
+            const alias = input.value.trim() || 'Jugador';
+            display.textContent = alias;
+        }
 
         function selectWeapon(weaponType) {
-            // Remover selección anterior
-            document.querySelector('.weapon.selected').classList.remove('selected');
-            // Agregar selección nueva
-            document.querySelector(`[data-weapon="${weaponType}"]`).classList.add('selected');
-            // Guardar arma seleccionada
+            const currentSelected = document.querySelector('.weapon.selected');
+            if (currentSelected) {
+                currentSelected.classList.remove('selected');
+            }
+            const nextSelected = document.querySelector(`[data-weapon="${weaponType}"]`);
+            if (nextSelected) {
+                nextSelected.classList.add('selected');
+            }
             selectedWeapon = weaponType;
-            // Actualizar vista previa
-            updateWeapon(weaponType);
+            localStorage.setItem('selectedWeapon', selectedWeapon);
+            if (typeof window.updateWeapon === 'function') {
+                window.updateWeapon(weaponType);
+            }
+        }
+
+        function restoreWeaponSelection() {
+            document.querySelectorAll('.weapon').forEach((weapon) => {
+                weapon.classList.toggle('selected', weapon.dataset.weapon === selectedWeapon);
+            });
         }
 
         async function startGame() {
             const roomId = document.getElementById('roomIdInput').value.trim() || 'default-room';
             const user = window.authSession.getStoredUser();
+            const customNameInput = document.getElementById('playerNameInput');
+            const customName = (customNameInput?.value || '').trim();
 
             if (!user) {
                 logout();
                 return;
             }
 
+            const finalUsername = customName || user.username || 'Jugador';
+            const updatedUser = { ...user, username: finalUsername };
+            window.authSession.storeUser(updatedUser, true);
+            window.authSession.storeUser(updatedUser, false);
+            localStorage.setItem('playerAlias', finalUsername);
+
             localStorage.setItem('selectedWeapon', selectedWeapon);
             localStorage.setItem('roomId', roomId);
 
             try {
-                    const response = await fetch('/api/rooms', {
+                const response = await fetch('/api/rooms', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ roomId })
@@ -126,7 +203,21 @@
                 return;
             }
 
-            document.getElementById('userLabel').textContent = `Usuario: ${user.username}`;
+            const playerNameInput = document.getElementById('playerNameInput');
+            const storedAlias = localStorage.getItem('playerAlias') || user.username || 'Jugador';
+
+            if (playerNameInput) {
+                playerNameInput.value = storedAlias;
+                playerNameInput.addEventListener('input', () => {
+                    updateAliasPreview();
+                    localStorage.setItem('playerAlias', playerNameInput.value.trim() || storedAlias);
+                });
+            }
+
+            const displayName = storedAlias || 'Jugador';
+            document.getElementById('userLabel').textContent = displayName;
+            restoreWeaponSelection();
+            syncMeteorCounter(localStorage.getItem('meteorCount') || 0);
             window.authSession.updateSessionStatus(document.getElementById('sessionStatus'));
         }
 
